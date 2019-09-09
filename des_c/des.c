@@ -456,8 +456,6 @@ void main (void)
       while ((textRead = getline(&textLine, &textLen, textPointer)) != -1)
       {
 
-          printf("%s\n", ciphertextFileName);
-
           // Copy the contents of the current textLine to x
           memcpy(x, textLine, sizeof(x));
 
