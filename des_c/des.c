@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include "des.h"
+#include <string.h>
+#include <stdlib.h>
+// #include <assert.h>
 
 void deskey(key, edf)
 unsigned char *key;
@@ -398,21 +401,23 @@ void des_dec(des_ctx *dc, unsigned char *data, int blocks) {
   }
 }
 
+// Note: all uncommented blocks of code are unchanged from the original
 void main (void)
 {
   des_ctx dc;
   int i;
   unsigned long data[10];
-//  char *cp, key[8] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
-//  char x[8] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xe7};
-  char *cp, key[8] = {0x75, 0x02, 0x76, 0x98, 0x03, 0x48, 0x51, 0x30};
-  char x[8] = {0x42, 0x00, 0x43, 0x00, 0x00, 0x00, 0x76, 0x00};
 
-  FILE *writeFile;
-  writeFile = fopen("test.txt", "w+");
-  fprintf(writeFile, "This is testing for fprintf...\n");
-  fputs("This is testing for fputs...\n", writeFile);
-  fclose(writeFile);
+  // Leaving these uninitialized
+  char *cp, key[8];
+  char x[8];
+
+  // I/O variable declarations for various output files
+  FILE *ciphertextOut;
+  FILE *plaintextOut;
+  int keyCounter = 0;
+  char ciphertextFileName[19] = "Ciphertextout0.txt";
+  char plaintextFileName[18] = "Plaintextout0.txt";
 
   // I/O variable declarations for Key.txt
   FILE * keyPointer;
@@ -426,87 +431,87 @@ void main (void)
   size_t textLen = 0;
   ssize_t textRead;
 
-  // int num;
-  char tmpString[2];
-
   // Open key file
   keyPointer = fopen("Key.txt", "r");
 
   // Read Key.txt line-by-line
   while ((keyRead = getline(&keyLine, &keyLen, keyPointer)) != -1)
   {
+      // Copy the contents of the current keyLine to key
+      memcpy(key, keyLine, sizeof(key));
+
       // Open text file on every loop
       textPointer = fopen("Plaintextin.txt", "r");
+
+      // Increase keyCounter
+      keyCounter = keyCounter + 1;
+
+      // Open output files
+      ciphertextFileName[13] = keyCounter +'0';
+      plaintextFileName[12] = keyCounter +'0';
+      ciphertextOut = fopen(ciphertextFileName, "a");
+      plaintextOut = fopen(plaintextFileName, "a");
 
       // Read Plaintextin.txt line-by-line
       while ((textRead = getline(&textLine, &textLen, textPointer)) != -1)
       {
-          // Do something here
 
-          // Break keyLine string into two-character pieces and assign to key array
-          for(i=0; i<16; i=i+2)
-          {
-              memcpy( tmpString, &keyLine[i], 2 );
-              key[i/2] = atoi(tmpString);
-          }
+          printf("%s\n", ciphertextFileName);
 
-          // Break textLine string into two-character pieces and assign to x array
-          for(i=0; i<16; i=i+2)
-          {
-              memcpy( tmpString, &textLine[i], 2 );
-              x[i/2] = atoi(tmpString);
-          }
+          // Copy the contents of the current textLine to x
+          memcpy(x, textLine, sizeof(x));
 
-          for (i=0; i< sizeof(key); i++)
-          {
-              printf("%d ", key[i]);
-          }
-          printf("\t");
+          cp = x;
 
-          for (i=0; i< sizeof(x); i++)
+          des_key(&dc, key);
+          des_enc(&dc, cp, 1);
+          printf("Enc(0..7, 0..7) = ");
+          for (i=0; i<8; i++)
           {
-              printf("%d ", x[i]);
+            printf("%02x ", ((unsigned int) cp[i])&0x00ff);
+            fprintf(ciphertextOut, "%c", ((unsigned int)cp[i])&0x00ff);
           }
           printf("\n");
 
+          des_dec(&dc, cp, 1);
+
+          printf("Dec(above, 0..7) = ");
+          for (i=0; i<8; i++)
+          {
+            // Print to console and file
+            printf("%02x ", ((unsigned int)cp[i])&0x00ff);
+            fprintf(plaintextOut, "%c", ((unsigned int)cp[i])&0x00ff);
+          }
+          printf("\n");
+
+          cp = (char *) data;
+          for (i=0; i<10; i++)
+            data[i] = i;
+
+          des_enc(&dc, cp, 5);  /* Enc 5 blocks. */
+          for(i=0; i<10; i+=2)
+            printf("Block %01d = %08lx %08lx.\n", i/2, data[i], data[i+1]);
+
+          des_dec(&dc, cp, 1);
+          des_dec(&dc, cp+8, 4);
+          for (i=0; i<10; i+=2)
+            printf("Block %01d = %08lx %08lx.\n", i/2, data[i], data[i+1]);
+
+          // Append a line break to both output files
+          fprintf(ciphertextOut, "\n");
+          fprintf(plaintextOut, "\n");
 
 
-          // cp = x;
-          //
-          // des_key(&dc, key);
-          // des_enc(&dc, cp, 1);
-          // printf("Enc(0..7, 0..7) = ");
-          // for (i=0; i<8; i++)
-          //   printf("%02x ", ((unsigned int) cp[i])&0x00ff);
-          // printf("\n");
-          //
-          // des_dec(&dc, cp, 1);
-          //
-          // printf("Dec(above, 0..7) = ");
-          // for (i=0; i<8; i++)
-          //   printf("%02x ", ((unsigned int)cp[i])&0x00ff);
-          // printf("\n");
-          //
-          // cp = (char *) data;
-          // for (i=0; i<10; i++)
-          //   data[i] = i;
-          //
-          // des_enc(&dc, cp, 5);  /* Enc 5 blocks. */
-          // for(i=0; i<10; i+=2)
-          //   printf("Block %01d = %08lx %08lx.\n", i/2, data[i], data[i+1]);
-          //
-          // des_dec(&dc, cp, 1);
-          // des_dec(&dc, cp+8, 4);
-          // for (i=0; i<10; i+=2)
-          //   printf("Block %01d = %08lx %08lx.\n", i/2, data[i], data[i+1]);
 
       }
       // Close text file on every loop
       fclose(textPointer);
+      // CLose the output files so we can append again on next loop
+      fclose(ciphertextOut);
+      fclose(plaintextOut);
+
   }
   // Close Key file
   fclose(keyPointer);
-
-  
 
 }

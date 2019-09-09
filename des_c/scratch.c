@@ -1,17 +1,52 @@
 #include <stdio.h>
 #include <string.h>
-#define _GNU_SOURCE
 #include <stdlib.h>
+#include <assert.h>
+
+//function to convert ascii char[] to hex-string (char[])
+void string2hexString(char* input, char* output)
+{
+    int loop;
+    int i;
+
+    i=0;
+    loop=0;
+
+    while(input[loop] != '\0')
+    {
+        sprintf((char*)(output+i),"%02X", input[loop]);
+        loop+=1;
+        i+=2;
+    }
+    //insert NULL at the end of the output string
+    output[i++] = '\0';
+}
+
+// static unsigned char gethex(const char *s, char **endptr) {
+//   assert(s);
+//   while (isspace(*s)) s++;
+//   assert(*s);
+//   return strtoul(s, endptr, 16);
+// }
+//
+// unsigned char *convert(const char *s, int *length) {
+//   unsigned char *answer = malloc((strlen(s) + 1) / 3);
+//   unsigned char *p;
+//   for (p = answer; *s; p++)
+//     *p = gethex(s, (char **)&s);
+//   *length = p - answer;
+//   return answer;
+// }
 
 int main()
 {
-    char *cp, key[8] = {0x75, 0x02, 0x76, 0x98, 0x03, 0x48, 0x51, 0x30};
+    char *cp, key[8];
     char x[8] = {0x42, 0x00, 0x43, 0x00, 0x00, 0x00, 0x76, 0x00};
 
-    for (int k; k<sizeof(key); k++)
-    {
-        printf("%d", key[k]);
-    }
+    // for (int k; k<sizeof(key); k++)
+    // {
+    //     printf("%d", key[k]);
+    // }
 
     FILE *writeFile;
     writeFile = fopen("test.txt", "w+");
@@ -33,6 +68,7 @@ int main()
 
     int num;
     char tmpString[2];
+    char * ptr;
 
     int i;
 
@@ -42,62 +78,24 @@ int main()
     // Read Key.txt line-by-line
     while ((keyRead = getline(&keyLine, &keyLen, keyPointer)) != -1)
     {
+        // Copy the contents of the current keyLine to key
+        memcpy(key, keyLine, sizeof(key));
+
         // Open text file on every loop
         textPointer = fopen("Plaintextin.txt", "r");
 
         // Read Plaintextin.txt line-by-line
         while ((textRead = getline(&textLine, &textLen, textPointer)) != -1)
         {
-            // Do something here
-            // Break keyLine string into two-character pieces and assign to key array
-            for(i=0; i<16; i=i+2)
-            {
-                memcpy( tmpString, &keyLine[i], 2 );
-                key[i/2] = atoi(tmpString);
-            }
+            // Copy the contents of the current textLine to x
+            memcpy(x, textLine, sizeof(x));
 
-            // Break textLine string into two-character pieces and assign to x array
-            for(i=0; i<16; i=i+2)
-            {
-                memcpy( tmpString, &textLine[i], 2 );
-                x[i/2] = atoi(tmpString);
-            }
-
-            for (i=0; i< sizeof(key); i++)
-            {
-                printf("%d ", key[i]);
-            }
-            printf("\t");
-
-            for (i=0; i< sizeof(x); i++)
-            {
-                printf("%d ", x[i]);
-            }
-            printf("\n");
-
-
-
-            // for(int i=0; i<=16; i++)
+            // // Delete this later
+            // for (int i=0; i<sizeof(x); i++)
             // {
-            //     memcpy( tmpString, &keyLine[i], 2 );
-            //     num = (int)strtol(tmpString, NULL, 16);
-            //     //key[i] = num;
-            //     printf("%X ", num);
+            //     printf("%x %c\n",x[i], x[i]);
             // }
-            // printf("\n");
-            //
-            // for(int i=0; i<=16; i++)
-            // {
-            //     memcpy( tmpString, &textLine[i], 2 );
-            //     num = (int)strtol(tmpString, NULL, 16);
-            //     //key[i] = num;
-            //     printf("%X ", num);
-            // }
-            // printf("\n\n");
-            // // printf("%s %s\n", strtok(keyLine, "\n"), strtok(textLine, "\n"));
-            // // num = (int)strtol(keyLine, NULL, 16);
-            // // printf("%X\n", num);
-            // // // printf("%s", textLine);
+
         }
         // Close text file on every loop
         fclose(textPointer);
