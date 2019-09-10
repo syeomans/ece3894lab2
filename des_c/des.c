@@ -456,6 +456,8 @@ void main (void)
       while ((textRead = getline(&textLine, &textLen, textPointer)) != -1)
       {
 
+          printf("%s\n", ciphertextFileName);
+
           // Copy the contents of the current textLine to x
           memcpy(x, textLine, sizeof(x));
 
@@ -498,13 +500,9 @@ void main (void)
           // Append a line break to both output files
           fprintf(ciphertextOut, "\n");
           fprintf(plaintextOut, "\n");
-
-
-
       }
-      // Close text file on every loop
+      // Close input file and output files on every loop
       fclose(textPointer);
-      // CLose the output files so we can append again on next loop
       fclose(ciphertextOut);
       fclose(plaintextOut);
 
