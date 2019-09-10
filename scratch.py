@@ -25,6 +25,7 @@ with open('input3.txt') as fp:
        line = fp.readline()
        input3 += line
 
+target = 0
 with open('Key.txt') as k:
     key = True
     while key:
@@ -37,13 +38,16 @@ with open('Key.txt') as k:
                 plaintext = p.readline()
                 if plaintext == "":
                     continue
-                for i in range(1,6):
-                    with open('Ciphertextout' + str(i) + '.txt') as c:
-                        ciphertext = True
-                        while ciphertext:
-                            ciphertext = c.readline()
-                            if ciphertext == "":
-                                continue
+                target += 1
+                counter = 0
+                with open('Ciphertextout.txt') as c:
+                    ciphertext = True
+                    while ciphertext:
+                        ciphertext = c.readline()
+                        if ciphertext == "":
+                            continue
+                        counter += 1
+                        if counter == target:
                             # print("key: " + key)
                             # print("plaintext: " + plaintext)
                             # print("ciphertext: " + ciphertext)
