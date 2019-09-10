@@ -440,6 +440,14 @@ void main (void)
       // Copy the contents of the current keyLine to key
       memcpy(key, keyLine, sizeof(key));
 
+      // Print out the key
+      printf("\nKey: ");
+      for (i=0; i<sizeof(key); i++)
+      {
+         printf("%c", key[i]);
+      }
+      printf("\n");
+
       // Open text file on every loop
       textPointer = fopen("Plaintextin.txt", "r");
 
@@ -456,10 +464,16 @@ void main (void)
       while ((textRead = getline(&textLine, &textLen, textPointer)) != -1)
       {
 
-          printf("%s\n", ciphertextFileName);
-
           // Copy the contents of the current textLine to x
           memcpy(x, textLine, sizeof(x));
+
+          // Print out the plaintext
+          printf("Text: ");
+          for (i=0; i<sizeof(x); i++)
+          {
+             printf("%c", x[i]);
+          }
+          printf("\n");
 
           cp = x;
 
@@ -469,7 +483,7 @@ void main (void)
           for (i=0; i<8; i++)
           {
             printf("%02x ", ((unsigned int) cp[i])&0x00ff);
-            fprintf(ciphertextOut, "%c", ((unsigned int)cp[i])&0x00ff);
+            fprintf(ciphertextOut, "%02x", ((unsigned int)cp[i])&0x00ff);
           }
           printf("\n");
 
@@ -484,18 +498,19 @@ void main (void)
           }
           printf("\n");
 
-          cp = (char *) data;
-          for (i=0; i<10; i++)
-            data[i] = i;
-
-          des_enc(&dc, cp, 5);  /* Enc 5 blocks. */
-          for(i=0; i<10; i+=2)
-            printf("Block %01d = %08lx %08lx.\n", i/2, data[i], data[i+1]);
-
-          des_dec(&dc, cp, 1);
-          des_dec(&dc, cp+8, 4);
-          for (i=0; i<10; i+=2)
-            printf("Block %01d = %08lx %08lx.\n", i/2, data[i], data[i+1]);
+          // Commenting out unused print statements
+          // cp = (char *) data;
+          // for (i=0; i<10; i++)
+          //   data[i] = i;
+          //
+          // des_enc(&dc, cp, 5);  /* Enc 5 blocks. */
+          // for(i=0; i<10; i+=2)
+          //   printf("Block %01d = %08lx %08lx.\n", i/2, data[i], data[i+1]);
+          //
+          // des_dec(&dc, cp, 1);
+          // des_dec(&dc, cp+8, 4);
+          // for (i=0; i<10; i+=2)
+          //   printf("Block %01d = %08lx %08lx.\n", i/2, data[i], data[i+1]);
 
           // Append a line break to both output files
           fprintf(ciphertextOut, "\n");

@@ -1,2 +1,5 @@
-This is testing for fprintf...
-This is testing for fputs...
+blizzard
+skipjack
+jumpoffs
+maximize
+engineer
