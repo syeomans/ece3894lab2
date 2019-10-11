@@ -409,15 +409,15 @@ void main (void)
   unsigned long data[10];
 
   // Leaving these uninitialized
-  char *cp, key1[8], key2[8], key3[8];
+  char *cp, key[8];
   char x[8];
 
   // I/O variable declarations for various output files
   FILE *ciphertextOut;
-  //FILE *plaintextOut;
+  FILE *plaintextOut;
   int keyCounter = 0;
   char ciphertextFileName[19] = "Ciphertextout0.txt";
-  //char plaintextFileName[18] = "Plaintextout0.txt";
+  char plaintextFileName[18] = "Plaintextout0.txt";
 
   // I/O variable declarations for Key.txt
   FILE * keyPointer;
@@ -438,29 +438,13 @@ void main (void)
   while ((keyRead = getline(&keyLine, &keyLen, keyPointer)) != -1)
   {
       // Copy the contents of the current keyLine to key
-      memcpy(key1, keyLine, sizeof(key1));
-
-      keyRead = getline(&keyLine, &keyLen, keyPointer);
-      memcpy(key2, keyLine, sizeof(key2));
-
-      keyRead = getline(&keyLine, &keyLen, keyPointer);
-      memcpy(key3, keyLine, sizeof(key3));
+      memcpy(key, keyLine, sizeof(key));
 
       // Print out the key
-      printf("\nKey 1, 2, 3: ");
-      for (i=0; i<sizeof(key1); i++)
+      printf("\nKey: ");
+      for (i=0; i<sizeof(key); i++)
       {
-         printf("%c", key1[i]);
-      }
-      printf(", ");
-      for (i=0; i<sizeof(key2); i++)
-      {
-         printf("%c", key2[i]);
-      }
-      printf(", ");
-      for (i=0; i<sizeof(key3); i++)
-      {
-         printf("%c", key3[i]);
+         printf("%c", key[i]);
       }
       printf("\n");
 
@@ -472,9 +456,9 @@ void main (void)
 
       // Open output files
       ciphertextFileName[13] = keyCounter +'0';
-      //plaintextFileName[12] = keyCounter +'0';
+      plaintextFileName[12] = keyCounter +'0';
       ciphertextOut = fopen(ciphertextFileName, "a");
-      //plaintextOut = fopen(plaintextFileName, "a");
+      plaintextOut = fopen(plaintextFileName, "a");
 
       // Read Plaintextin.txt line-by-line
       while ((textRead = getline(&textLine, &textLen, textPointer)) != -1)
@@ -484,58 +468,22 @@ void main (void)
           memcpy(x, textLine, sizeof(x));
 
           // Print out the plaintext
-          // printf("Text: ");
-          // for (i=0; i<sizeof(x); i++)
-          // {
-          //    printf("%x", x[i]);
-          // }
-          // printf("\n");
+          printf("Text: ");
+          for (i=0; i<sizeof(x); i++)
+          {
+             printf("%c", x[i]);
+          }
+          printf("\n");
 
           cp = x;
 
-          des_key(&dc, key1);
+          des_key(&dc, key);
           des_enc(&dc, cp, 1);
-
-          printf("Text: ");
-          for (i=0; i<sizeof(cp); i++)
-          {
-             //printf("%02x", cp[i]);
-             printf("%02x ", ((unsigned int) cp[i])&0x00ff);
-          }
-          printf("\n");
-
-          // printf("\n");
-          // memcpy(x, textLine, sizeof(x));
-          // cp = x;
-          des_key(&dc, key2);
-          des_enc(&dc, cp, 1);
-          // Print out the plaintext
-          printf("Text: ");
-          for (i=0; i<sizeof(cp); i++)
-          {
-             //printf("%02x", cp[i]);
-             printf("%02x ", ((unsigned int) cp[i])&0x00ff);
-          }
-          printf("\n");
-
-          // // memcpy(x, textLine, sizeof(x));
-          // // cp = x;
-          des_key(&dc, key3);
-          des_enc(&dc, cp, 1);
-          // Print out the plaintext
-          printf("Text: ");
-          for (i=0; i<sizeof(cp); i++)
-          {
-             //printf("%02x", cp[i]);
-             printf("%02x ", ((unsigned int) cp[i])&0x00ff);
-          }
-          printf("\n");
-
           printf("Enc(0..7, 0..7) = ");
           for (i=0; i<8; i++)
           {
             printf("%02x ", ((unsigned int) cp[i])&0x00ff);
-            fprintf(ciphertextOut, "%x", ((unsigned int)cp[i])&0x00ff);
+            fprintf(ciphertextOut, "%02x", ((unsigned int)cp[i])&0x00ff);
           }
           printf("\n");
 
@@ -546,18 +494,32 @@ void main (void)
           {
             // Print to console and file
             printf("%02x ", ((unsigned int)cp[i])&0x00ff);
-            //fprintf(plaintextOut, "%c", ((unsigned int)cp[i])&0x00ff);
+            fprintf(plaintextOut, "%c", ((unsigned int)cp[i])&0x00ff);
           }
           printf("\n");
 
+          // Commenting out unused print statements
+          // cp = (char *) data;
+          // for (i=0; i<10; i++)
+          //   data[i] = i;
+          //
+          // des_enc(&dc, cp, 5);  /* Enc 5 blocks. */
+          // for(i=0; i<10; i+=2)
+          //   printf("Block %01d = %08lx %08lx.\n", i/2, data[i], data[i+1]);
+          //
+          // des_dec(&dc, cp, 1);
+          // des_dec(&dc, cp+8, 4);
+          // for (i=0; i<10; i+=2)
+          //   printf("Block %01d = %08lx %08lx.\n", i/2, data[i], data[i+1]);
+
           // Append a line break to both output files
           fprintf(ciphertextOut, "\n");
-          //fprintf(plaintextOut, "\n");
+          fprintf(plaintextOut, "\n");
       }
       // Close input file and output files on every loop
       fclose(textPointer);
       fclose(ciphertextOut);
-      //fclose(plaintextOut);
+      fclose(plaintextOut);
 
   }
   // Close Key file

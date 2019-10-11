@@ -401,6 +401,58 @@ void des_dec(des_ctx *dc, unsigned char *data, int blocks) {
   }
 }
 
+int chartohex(char input)
+{
+    int output;
+    if (input == '0')
+        output = 0;
+    else if (input == '1')
+        output = 1;
+    else if (input == '2')
+        output = 2;
+    else if (input == '3')
+        output = 3;
+    else if (input == '4')
+        output = 4;
+    else if (input == '5')
+        output = 5;
+    else if (input == '6')
+        output = 6;
+    else if (input == '7')
+        output = 7;
+    else if (input == '8')
+        output = 8;
+    else if (input == '9')
+        output = 9;
+    else if (input == 'a' || input =='A')
+        output = 10;
+    else if (input == 'b' || input =='B')
+        output = 11;
+    else if (input == 'c' || input =='C')
+        output = 12;
+    else if (input == 'd' || input =='D')
+        output = 13;
+    else if (input == 'e' || input =='E')
+        output = 14;
+    else if (input == 'f' || input =='F')
+        output = 15;
+    return(output);
+}
+
+void hexify(char input[16], char * output)
+{
+    unsigned int hex1;
+    unsigned int hex2;
+    unsigned int hexFinal;
+    for (int i=0; i<16; i+=2)
+    {
+        hex1 = chartohex(input[i]);
+        hex2 = chartohex(input[i+1]);
+        hexFinal = (hex1 << 4) + hex2;
+        output[i/2] = hexFinal;
+    }
+}
+
 // Note: all uncommented blocks of code are unchanged from the original
 void main (void)
 {
@@ -411,13 +463,14 @@ void main (void)
   // Leaving these uninitialized
   char *cp, key1[8], key2[8], key3[8];
   char x[8];
+  char textHex[8];
 
   // I/O variable declarations for various output files
-  FILE *ciphertextOut;
-  //FILE *plaintextOut;
+  //FILE *ciphertextOut;
+  FILE *plaintextOut;
   int keyCounter = 0;
-  char ciphertextFileName[19] = "Ciphertextout0.txt";
-  //char plaintextFileName[18] = "Plaintextout0.txt";
+  //char ciphertextFileName[19] = "Ciphertextout0.txt";
+  char plaintextFileName[18] = "Plaintextout0.txt";
 
   // I/O variable declarations for Key.txt
   FILE * keyPointer;
@@ -465,23 +518,36 @@ void main (void)
       printf("\n");
 
       // Open text file on every loop
-      textPointer = fopen("Plaintextin.txt", "r");
+      textPointer = fopen("Ciphertextin.txt", "r");
 
       // Increase keyCounter
       keyCounter = keyCounter + 1;
 
       // Open output files
-      ciphertextFileName[13] = keyCounter +'0';
-      //plaintextFileName[12] = keyCounter +'0';
-      ciphertextOut = fopen(ciphertextFileName, "a");
-      //plaintextOut = fopen(plaintextFileName, "a");
+      //ciphertextFileName[13] = keyCounter +'0';
+      plaintextFileName[12] = keyCounter +'0';
+      //ciphertextOut = fopen(ciphertextFileName, "a");
+      plaintextOut = fopen(plaintextFileName, "a");
 
-      // Read Plaintextin.txt line-by-line
+      // Read Ciphertextin.txt line-by-line
       while ((textRead = getline(&textLine, &textLen, textPointer)) != -1)
       {
+          // Convert text line from a string of hex characters to an array of hex characters
+          hexify(textLine, textHex);
+
+          // Print output of hexify
+          printf("Hexify: ");
+          for (int i=0; i<sizeof(textHex); i++)
+          {
+              printf("%0x ", textHex[i]&0x00FF);
+          }
+          printf("\n");
+          //printf("textLine: %s\n", textLine);
+
 
           // Copy the contents of the current textLine to x
-          memcpy(x, textLine, sizeof(x));
+          // memcpy(x, textLine, sizeof(x));
+          memcpy(x, textHex, sizeof(x));
 
           // Print out the plaintext
           // printf("Text: ");
@@ -493,8 +559,8 @@ void main (void)
 
           cp = x;
 
-          des_key(&dc, key1);
-          des_enc(&dc, cp, 1);
+          des_key(&dc, key3);
+          des_dec(&dc, cp, 1);
 
           printf("Text: ");
           for (i=0; i<sizeof(cp); i++)
@@ -508,7 +574,7 @@ void main (void)
           // memcpy(x, textLine, sizeof(x));
           // cp = x;
           des_key(&dc, key2);
-          des_enc(&dc, cp, 1);
+          des_dec(&dc, cp, 1);
           // Print out the plaintext
           printf("Text: ");
           for (i=0; i<sizeof(cp); i++)
@@ -520,8 +586,8 @@ void main (void)
 
           // // memcpy(x, textLine, sizeof(x));
           // // cp = x;
-          des_key(&dc, key3);
-          des_enc(&dc, cp, 1);
+          des_key(&dc, key1);
+          des_dec(&dc, cp, 1);
           // Print out the plaintext
           printf("Text: ");
           for (i=0; i<sizeof(cp); i++)
@@ -535,29 +601,29 @@ void main (void)
           for (i=0; i<8; i++)
           {
             printf("%02x ", ((unsigned int) cp[i])&0x00ff);
-            fprintf(ciphertextOut, "%x", ((unsigned int)cp[i])&0x00ff);
+            //fprintf(ciphertextOut, "%02x", ((unsigned int)cp[i])&0x00ff);
           }
           printf("\n");
 
-          des_dec(&dc, cp, 1);
+          //des_dec(&dc, cp, 1);
 
           printf("Dec(above, 0..7) = ");
           for (i=0; i<8; i++)
           {
             // Print to console and file
-            printf("%02x ", ((unsigned int)cp[i])&0x00ff);
-            //fprintf(plaintextOut, "%c", ((unsigned int)cp[i])&0x00ff);
+            printf("%c ", ((unsigned int)cp[i])&0x00ff);
+            fprintf(plaintextOut, "%c", ((unsigned int)cp[i])&0x00ff);
           }
           printf("\n");
 
           // Append a line break to both output files
-          fprintf(ciphertextOut, "\n");
-          //fprintf(plaintextOut, "\n");
+          //fprintf(ciphertextOut, "\n");
+          fprintf(plaintextOut, "\n");
       }
       // Close input file and output files on every loop
       fclose(textPointer);
-      fclose(ciphertextOut);
-      //fclose(plaintextOut);
+      //fclose(ciphertextOut);
+      fclose(plaintextOut);
 
   }
   // Close Key file

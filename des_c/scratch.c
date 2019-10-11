@@ -2,24 +2,63 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <ctype.h>
 
-//function to convert ascii char[] to hex-string (char[])
-void string2hexString(char* input, char* output)
+int chartohex(char input)
 {
-    int loop;
-    int i;
+    int output;
+    if (input == '0')
+        output = 0;
+    else if (input == '1')
+        output = 1;
+    else if (input == '2')
+        output = 2;
+    else if (input == '3')
+        output = 3;
+    else if (input == '4')
+        output = 4;
+    else if (input == '5')
+        output = 5;
+    else if (input == '6')
+        output = 6;
+    else if (input == '7')
+        output = 7;
+    else if (input == '8')
+        output = 8;
+    else if (input == '9')
+        output = 9;
+    else if (input == 'a' || input =='A')
+        output = 10;
+    else if (input == 'b' || input =='B')
+        output = 11;
+    else if (input == 'c' || input =='C')
+        output = 12;
+    else if (input == 'd' || input =='D')
+        output = 13;
+    else if (input == 'e' || input =='E')
+        output = 14;
+    else if (input == 'f' || input =='F')
+        output = 15;
+    return(output);
+}
 
-    i=0;
-    loop=0;
-
-    while(input[loop] != '\0')
+void hexify(char input[16], char * output)
+{
+    unsigned int hex1;
+    unsigned int hex2;
+    unsigned int hexFinal;
+    for (int i=0; i<16; i+=2)
     {
-        sprintf((char*)(output+i),"%02X", input[loop]);
-        loop+=1;
-        i+=2;
+        hex1 = chartohex(input[i]);
+        hex2 = chartohex(input[i+1]);
+        hexFinal = (hex1 << 4) + hex2;
+        output[i/2] = hexFinal;
     }
-    //insert NULL at the end of the output string
-    output[i++] = '\0';
+}
+
+void stringify(char input[8], char * output)
+{
+    //
 }
 
 // static unsigned char gethex(const char *s, char **endptr) {
@@ -38,70 +77,22 @@ void string2hexString(char* input, char* output)
 //   return answer;
 // }
 
+
+
 int main()
 {
-    char *cp, key[8];
-    char x[8] = {0x42, 0x00, 0x43, 0x00, 0x00, 0x00, 0x76, 0x00};
+    // char foo[16] = "1ea1789cd57b3af8";
+    char foo[16] = "0123456789abcdef";
+    char bar[8];
+    char * fooptr = foo;
 
-    // for (int k; k<sizeof(key); k++)
-    // {
-    //     printf("%d", key[k]);
-    // }
+    hexify(foo, bar);
+    for (int i=0; i<8; i++)
+        printf("%0x ", bar[i]&0x00ff);
+    printf("\n");
 
-    FILE *writeFile;
-    writeFile = fopen("test.txt", "w+");
-    fprintf(writeFile, "This is testing for fprintf...\n");
-    fputs("This is testing for fputs...\n", writeFile);
-    fclose(writeFile);
-
-    // I/O variable declarations for Key.txt
-    FILE * keyPointer;
-    char * keyLine = NULL; // Useful value stored here
-    size_t keyLen = 0;
-    ssize_t keyRead;
-
-    // I/O variable declarations for Plaintextin.txt
-    FILE * textPointer;
-    char * textLine = NULL; // Useful value stored here
-    size_t textLen = 0;
-    ssize_t textRead;
-
-    int num;
-    char tmpString[2];
-    char * ptr;
-
-    int i;
-
-    // Open key file
-    keyPointer = fopen("Key.txt", "r");
-
-    // Read Key.txt line-by-line
-    while ((keyRead = getline(&keyLine, &keyLen, keyPointer)) != -1)
-    {
-        // Copy the contents of the current keyLine to key
-        memcpy(key, keyLine, sizeof(key));
-
-        // Open text file on every loop
-        textPointer = fopen("Plaintextin.txt", "r");
-
-        // Read Plaintextin.txt line-by-line
-        while ((textRead = getline(&textLine, &textLen, textPointer)) != -1)
-        {
-            // Copy the contents of the current textLine to x
-            memcpy(x, textLine, sizeof(x));
-
-            // // Delete this later
-            // for (int i=0; i<sizeof(x); i++)
-            // {
-            //     printf("%x %c\n",x[i], x[i]);
-            // }
-
-        }
-        // Close text file on every loop
-        fclose(textPointer);
-    }
-    // Close Key file
-    fclose(keyPointer);
-
+    // unsigned char bar = convert(foo, 16);
+    // printf("%x", bar);
+    // printf("%ld\n", atol("1ea1789cd57b3af8"));
     return 0;
 }
