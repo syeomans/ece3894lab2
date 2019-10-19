@@ -1,5 +1,0 @@
-626c697a7a617264 (ASCII: blizzard)
-736b69706a61636b (ASCII: skipjack)
-6a756d706f666673 (ASCII: jumpoffs)
-6d6178696d697a65 (ASCII: maximize)
-656e67696e656572 (ASCII: engineer)

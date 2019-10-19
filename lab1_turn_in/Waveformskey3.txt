@@ -1,3 +1,0 @@
-input plaintext: 70697A7A65726961 (hex value of ASCII "pizzeria")
-input ciphertext: 90B3D89867A05F32
-key: 6A756D706F666673 (hex value of ASCII "jumpoffs")
