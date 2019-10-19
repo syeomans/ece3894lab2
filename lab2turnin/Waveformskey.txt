@@ -1,0 +1,7 @@
+plaintext: 	activity (ASCII: 6163746976697479)
+
+ciphertext: 	1ea1789cd57b3af8
+
+keys: 		blizzard (ASCII: 626C697A7A617264)
+		skipjack (ASCII: 736B69706A61636B)
+		jumpoffs (ASCII: 6A756D706F666673)

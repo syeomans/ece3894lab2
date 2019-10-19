@@ -1,0 +1,5 @@
+        reset <= '1';
+                wait; -- stop simulation
+            end process tb1;
+            --  End Test Bench
+        END;
