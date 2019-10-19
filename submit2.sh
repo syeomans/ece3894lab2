@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 echo ""
-echo "---** Electronic Submission for ECE3894: Lab1 **---"
+echo "---** Electronic Submission for ECE3894: Lab2 **---"
 echo "---** Stop if you are submitting a different lab. **---"
 echo "---** continue? <y|n> **--- "
 set reply = $<
@@ -12,12 +12,12 @@ if ($reply == "y") then
 		echo ""
 		echo "Enter your favorite number (0-whatever): "
 		set rand = $<
-		set filename="$USER-Lab1-$rand.zip"
+		set filename="$USER-Lab2-$rand.zip"
 		zip -r $filename $1
 		echo "---** Attempting to submit **---"
-		cp $filename /nethome/ychen414/ECE3894/lab/lab1/submissions/.
-		if (-e /nethome/ychen414/ECE3894/lab/lab1/submissions/$filename) then
-			chmod 666 /nethome/ychen414/ECE3894/lab/lab1/submissions/$filename
+		cp $filename /nethome/ychen414/ECE3894/lab/lab2/submissions/.
+		if (-e /nethome/ychen414/ECE3894/lab/lab2/submissions/$filename) then
+			chmod 666 /nethome/ychen414/ECE3894/lab/lab2/submissions/$filename
 			echo "---** Copy succeeded **---"
 			echo ""
 			echo "Keep the checksum below: "
