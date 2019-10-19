@@ -503,17 +503,17 @@ void main (void)
       printf("\nKey 1, 2, 3: ");
       for (i=0; i<sizeof(key1); i++)
       {
-         printf("%c", key1[i]);
+         printf("%0x", key1[i]);
       }
       printf(", ");
       for (i=0; i<sizeof(key2); i++)
       {
-         printf("%c", key2[i]);
+         printf("%0x", key2[i]);
       }
       printf(", ");
       for (i=0; i<sizeof(key3); i++)
       {
-         printf("%c", key3[i]);
+         printf("%0x", key3[i]);
       }
       printf("\n");
 
@@ -536,10 +536,10 @@ void main (void)
           hexify(textLine, textHex);
 
           // Print output of hexify
-          printf("Hexify: ");
+         // printf("Hexify: ");
           for (int i=0; i<sizeof(textHex); i++)
           {
-              printf("%0x ", textHex[i]&0x00FF);
+              printf("%0x", textHex[i]&0x00FF);
           }
           printf("\n");
           //printf("textLine: %s\n", textLine);
@@ -562,11 +562,11 @@ void main (void)
           des_key(&dc, key3);
           des_dec(&dc, cp, 1);
 
-          printf("Text: ");
+          //printf("Text: ");
           for (i=0; i<sizeof(cp); i++)
           {
              //printf("%02x", cp[i]);
-             printf("%02x ", ((unsigned int) cp[i])&0x00ff);
+             printf("%02x", ((unsigned int) cp[i])&0x00ff);
           }
           printf("\n");
 
@@ -576,11 +576,11 @@ void main (void)
           des_key(&dc, key2);
           des_dec(&dc, cp, 1);
           // Print out the plaintext
-          printf("Text: ");
+          //printf("Text: ");
           for (i=0; i<sizeof(cp); i++)
           {
              //printf("%02x", cp[i]);
-             printf("%02x ", ((unsigned int) cp[i])&0x00ff);
+             printf("%02x", ((unsigned int) cp[i])&0x00ff);
           }
           printf("\n");
 
@@ -589,31 +589,31 @@ void main (void)
           des_key(&dc, key1);
           des_dec(&dc, cp, 1);
           // Print out the plaintext
-          printf("Text: ");
+          //printf("Text: ");
           for (i=0; i<sizeof(cp); i++)
           {
              //printf("%02x", cp[i]);
-             printf("%02x ", ((unsigned int) cp[i])&0x00ff);
+             printf("%02x", ((unsigned int) cp[i])&0x00ff);
           }
           printf("\n");
 
-          printf("Enc(0..7, 0..7) = ");
-          for (i=0; i<8; i++)
-          {
-            printf("%02x ", ((unsigned int) cp[i])&0x00ff);
-            //fprintf(ciphertextOut, "%02x", ((unsigned int)cp[i])&0x00ff);
-          }
-          printf("\n");
+          // printf("Enc(0..7, 0..7) = ");
+          // for (i=0; i<8; i++)
+          // {
+          //   printf("%02x ", ((unsigned int) cp[i])&0x00ff);
+          //   //fprintf(ciphertextOut, "%02x", ((unsigned int)cp[i])&0x00ff);
+          // }
+          // printf("\n");
 
           //des_dec(&dc, cp, 1);
 
-          printf("Dec(above, 0..7) = ");
-          for (i=0; i<8; i++)
-          {
-            // Print to console and file
-            printf("%c ", ((unsigned int)cp[i])&0x00ff);
-            fprintf(plaintextOut, "%c", ((unsigned int)cp[i])&0x00ff);
-          }
+          // printf("Dec(above, 0..7) = ");
+          // for (i=0; i<8; i++)
+          // {
+          //   // Print to console and file
+          //   printf("%c ", ((unsigned int)cp[i])&0x00ff);
+          //   fprintf(plaintextOut, "%c", ((unsigned int)cp[i])&0x00ff);
+          // }
           printf("\n");
 
           // Append a line break to both output files

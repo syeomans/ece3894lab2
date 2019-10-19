@@ -1,0 +1,85 @@
+        reset <= '1';
+        wait for CLOCK_PERIOD; -- wait until reset completes
+        reset <= '0';
+        -----------------------------
+        key_in            <= X"KEY1";
+        funct_select      <= '1';
+        data_in           <= X"DATAIN";
+        lddata            <= '1';
+        wait until des_out_rdy = '1';
+
+        assert data_out = X"DATAOUT1" report "test #1 failed" severity error;
+
+
+
+        reset <= '1';
+        wait for CLOCK_PERIOD; -- wait until reset completes
+        reset <= '0';
+        -----------------------------
+        key_in            <= X"KEY2";
+        funct_select      <= '1';
+        data_in           <= X"DATAOUT1";
+        lddata            <= '1';
+        wait until des_out_rdy = '1';
+
+        assert data_out = X"DATAOUT2" report "test #1 failed" severity error;
+
+
+
+        reset <= '1';
+        wait for CLOCK_PERIOD; -- wait until reset completes
+        reset <= '0';
+        -----------------------------
+        key_in            <= X"KEY3";
+        funct_select      <= '1';
+        data_in           <= X"DATAOUT2";
+        lddata            <= '1';
+        wait until des_out_rdy = '1';
+
+        assert data_out = X"DATAOUT3" report "test #1 failed" severity error;
+
+        -------------------------------------------------------------------------------------------
+        wait for CLOCK_PERIOD*5;
+        reset <= '1';
+        wait for CLOCK_PERIOD;
+        reset <= '0';
+        -----------------------------
+        key_in            <= X"KEY3";
+        funct_select      <= '0';
+        data_in           <= X"DATAOUT3";
+        lddata            <= '1';
+        wait until des_out_rdy = '1';
+
+        assert data_out = X"DATAOUT2" report "test #2 failed" severity error;
+
+
+
+        wait for CLOCK_PERIOD*5;
+        reset <= '1';
+        -----------------------------
+        wait for CLOCK_PERIOD;
+        reset <= '0';
+        key_in            <= X"KEY2";
+        funct_select      <= '0';
+        data_in           <= X"DATAOUT2";
+        lddata            <= '1';
+        wait until des_out_rdy = '1';
+
+        assert data_out = X"DATAOUT1" report "test #2 failed" severity error;
+
+
+
+        wait for CLOCK_PERIOD*5;
+        reset <= '1';
+        -----------------------------
+        wait for CLOCK_PERIOD;
+        reset <= '0';
+        key_in            <= X"KEY1";
+        funct_select      <= '0';
+        data_in           <= X"DATAOUT1";
+        lddata            <= '1';
+        wait until des_out_rdy = '1';
+
+        assert data_out = X"DATAIN" report "test #2 failed" severity error;
+
+        -------------------------------------------------------------------------------------------
